@@ -29,10 +29,13 @@ def load_dataset():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
     
+    # C:\Users\hp\Eye-Retina-Degeneration-Detection\dataset\train
+    
+    
     # Define dataset paths
-    train_path = "../dataset/train"
-    valid_path = "../dataset/valid"
-    test_path = "../dataset/test"
+    train_path = "C:/Users/hp/Eye-Retina-Degeneration-Detection/dataset/train"
+    valid_path = "C:/Users/hp/Eye-Retina-Degeneration-Detection/dataset/valid"
+    test_path = "C:/Users/hp/Eye-Retina-Degeneration-Detection/dataset/test"
     
     # Define datasets
     train_dataset = datasets.ImageFolder(train_path, transform=transform)
@@ -107,13 +110,13 @@ def train_model(train_loader, valid_loader, num_epochs):
               f'Training Loss: {avg_train_loss:.4f}, '
               f'Validation Loss: {avg_val_loss:.4f}, '
               f'Accuracy: {accuracy:.4f}')
-    torch.save(model.state_dict(), "../models/transfer_model.pth")
+    torch.save(model.state_dict(), "C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth")
     
 
 def evaluate_model(test_loader):
     
     model = TransferNet()
-    model.load_state_dict(torch.load("../models/transfer_model.pth"))
+    model.load_state_dict(torch.load("C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth"))
     model.to(device)
 
     model.eval()
@@ -142,7 +145,7 @@ def run(epoches):
     return acc
     
 if __name__ == "__main__":
-    run(epoches)
+    run()
 
 
 
