@@ -55,7 +55,9 @@ one = gr.Interface(
     inputs = gradient_input,
     outputs = gradient_output,  
     submit_btn = "Train",
-    title="Train your own model!"
+    title="Train your own model!",
+    description="<img src='https://i.ibb.co/Bw08434/logo-1.png' alt='Logo' style='width:230px;height:100px;border-radius:5px;box-shadow:2px 2px 5px 0px rgba(0,0,0,0.75);background-color:black;'><br>",
+    
     
 )
 two = gr.Interface(
@@ -64,6 +66,7 @@ two = gr.Interface(
     outputs = output, 
     submit_btn="Predict",
     title="Predict Diabetic Retinopathy!!",
+    description="<img src='https://i.ibb.co/Bw08434/logo-1.png' alt='Logo' style='width:230px;height:100px;border-radius:5px;box-shadow:2px 2px 5px 0px rgba(0,0,0,0.75);background-color:black;'><br>Predict diabetic retinopathy disease of an instance here!!",
     examples=
     [
         ["../../hp/Eye-Retina-Degeneration-Detection/dataset/test/DR/0ada12c0e78f_png.rf.3e8e491a2cacb9af201e2f89f3afca61.jpg", "DR"],
