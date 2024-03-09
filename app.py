@@ -30,10 +30,12 @@ def predict(image_path):
         output = model(img)
         probabilities = torch.softmax(output, dim=1)
         predicted_class = torch.argmax(probabilities, dim=1).item()
-    predicted_class_label = "Diabetic Retinopathy" if predicted_class == 0 else "No Diabetic Rhetinopathy"
+    predicted_class_label = "Diabetic Retinopathy Detected ⚠️" if predicted_class == 0 else "No Diabetic Rhetinopathy Detected ✅"
 
     probability = probabilities[0][predicted_class].cpu().numpy() * 100
-    return predicted_class_label, probability
+    rounded_probability = round(probability, 2)
+    rounded_probability = str(rounded_probability) + "%"
+    return predicted_class_label, rounded_probability
     
 gradient_input = [
     gr.Slider(minimum=1, maximum=500, step = 10, label="Number of Epoches"),
@@ -72,8 +74,8 @@ two = gr.Interface(
     inputs = inp,
     outputs = output, 
     submit_btn="Predict",
-    title="Predict Diabetic Retinopathy!!",
-    description="<img src='https://i.ibb.co/Bw08434/logo-1.png' alt='Logo' style='width:230px;height:100px;border-radius:5px;box-shadow:2px 2px 5px 0px rgba(0,0,0,0.75);background-color:black;'><br>Predict diabetic retinopathy disease of an instance here!!",
+    title="Predict Diabetic Retinopathy 👁!",
+    description="<img src='https://i.ibb.co/Bw08434/logo-1.png' alt='Logo' style='width:230px;height:100px;border-radius:5px;box-shadow:2px 2px 5px 0px rgba(0,0,0,0.75);background-color:black;'><br>",
     examples=
     [
         ["../../hp/Eye-Retina-Degeneration-Detection/dataset/test/DR/0ada12c0e78f_png.rf.3e8e491a2cacb9af201e2f89f3afca61.jpg", "DR"],
