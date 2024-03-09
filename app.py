@@ -36,19 +36,24 @@ def predict(image_path):
     return predicted_class_label, probability
     
 gradient_input = [
-                        gr.Slider(minimum=10, maximum=500, step = 10, label="Number of Epoches")
-                    ]
+    gr.Slider(minimum=1, maximum=500, step = 10, label="Number of Epoches"),
+    gr.Radio(label="Optimizers", choices = [("Adam", 0), ("RMSprop", 1), ("Adagrad", 2), ("SGD", 3)]),
+    gr.Slider(minimum=0.000001, maximum=1, step = 0.001, label="Learning Rate"),
+    ]
+
 gradient_output = [
     gr.Textbox(label="Accuracy Score"),
+    gr.Image(label = "Confusion Matrix"),
+    gr.Image(label = "Loss Graph")
 ]
 
 inp = [
-        gr.Image(type="filepath")
-                ]
+        gr.Image(type="filepath") 
+    ]
 
 output =  [ gr.Label(label="Predction: "),
             gr.Label(label="Probability: ")
-            ]  
+        ]  
 
 one = gr.Interface(
     fn = run,
@@ -57,6 +62,8 @@ one = gr.Interface(
     submit_btn = "Train",
     title="Train your own model!",
     description="<img src='https://i.ibb.co/Bw08434/logo-1.png' alt='Logo' style='width:230px;height:100px;border-radius:5px;box-shadow:2px 2px 5px 0px rgba(0,0,0,0.75);background-color:black;'><br>",
+    article="<h3>Dataset link here: <a href='https://www.kaggle.com/datasets/pkdarabi/diagnosis-of-diabetic-retinopathy'>Dataset</a>.</h3>"
+    
     
     
 )
@@ -75,7 +82,9 @@ two = gr.Interface(
         ["../../hp/Eye-Retina-Degeneration-Detection/dataset/test/No_DR/03b373718013_png.rf.aeac7af7a221106fab6aaa133b5ecc3f.jpg", "No_DR"],
         
     ]
-)
+    
+    )
+
 demo = gr.TabbedInterface([one, two], ["Train", "Predict"])
 
 if __name__ == "__main__":

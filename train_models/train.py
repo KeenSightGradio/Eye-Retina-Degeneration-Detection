@@ -65,13 +65,19 @@ class TransferNet(nn.Module):
         x = self.fc(x)
         return x
 
-def train_model(train_loader, valid_loader, num_epochs):
+def train_model(train_loader, valid_loader, num_epochs, optimizer_index, learning_rate):
     model = TransferNet()
     model = model.to(device)
-    
+    opt = [optim.Adam(model.parameters()), optim.RMSprop(model.parameters()), optim.Adagrad(model.parameters()), optim.SGD(model.parameters())]
+    optimizer = opt[optimizer_index]
+    optimizer.lr = learning_rate
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=1e-4)
+
+    # optimizer = optim.Adam(model.parameters(), lr=1e-4)
     scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10)
+    
+    train_losses = []  # List to store training losses
+    val_losses = []  # List to store validation losses
     
     for epoch in tqdm(range(num_epochs), desc="Epochs"):
         model.train()
@@ -105,18 +111,40 @@ def train_model(train_loader, valid_loader, num_epochs):
         accuracy = correct_preds.double() / total_samples
 
         scheduler.step(avg_val_loss)
+        
+        train_losses.append(avg_train_loss)
+        val_losses.append(avg_val_loss)
 
         print(f'Epoch [{epoch + 1}/{num_epochs}], '
               f'Training Loss: {avg_train_loss:.4f}, '
               f'Validation Loss: {avg_val_loss:.4f}, '
               f'Accuracy: {accuracy:.4f}')
-    torch.save(model.state_dict(), "C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth")
+        
+    # Plotting the training and validation loss
+    plt.plot(range(1, num_epochs + 1), train_losses, label='Training Loss')
+    plt.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss')
+    # plt.legend()
+    # plt.show()
     
+    # Convert the plot to an image
+    plt.tight_layout()
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    
+    
+    torch.save(model.state_dict(),  "C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth")
+    return image
 
 def evaluate_model(test_loader):
     
     model = TransferNet()
-    model.load_state_dict(torch.load("C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth"))
+    model.load_state_dict(torch.load("C:/Users/hp/Eye-Retina-Degeneration-Detection/models/transfer_model.pth",map_location=device)
+)
     model.to(device)
 
     model.eval()
@@ -134,18 +162,39 @@ def evaluate_model(test_loader):
     correct = sum([1 if pred == label else 0 for pred, label in zip(all_preds, all_labels)])
     total = len(all_labels)
     accuracy = correct / total
+    cm = confusion_matrix(all_labels, all_preds)
 
-    return accuracy
+    return accuracy, cm
 
-def run(epoches):
+def confusion_matrixes(cm):
+    
+    # Plot confusion matrix
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.title('Confusion Matrix')
+    plt.tight_layout()
+    
+    # Convert the plot to an image
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    
+    return image
+    
+def run(epoches, optimizer_index, learning_rate):
     
     train_loader, valid_loader, test_loader = load_dataset()
-    train_model(train_loader, valid_loader, epoches)
-    acc = evaluate_model(test_loader)
-    return acc
+    loss_image = train_model(train_loader, valid_loader, epoches, optimizer_index, learning_rate)
+    acc, cm = evaluate_model(test_loader)
+    con_mat = confusion_matrixes(cm)
+    
+    return acc, con_mat, loss_image
     
 if __name__ == "__main__":
-    run()
+    run(1, 1, 0.01)
 
 
 
