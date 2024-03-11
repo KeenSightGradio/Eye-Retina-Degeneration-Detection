@@ -45,8 +45,8 @@ gradient_input = [
 
 gradient_output = [
     gr.Textbox(label="Accuracy Score"),
-    gr.Image(label = "Confusion Matrix"),
-    gr.Image(label = "Loss Graph")
+    gr.Gallery(allow_preview=True, label="Data Visualization", object_fit="fill", type="numpy", height="auto", rows=(1, 2), columns=[1])
+                    
 ]
 
 inp = [

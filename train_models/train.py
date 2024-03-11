@@ -191,7 +191,9 @@ def run(epoches, optimizer_index, learning_rate):
     acc, cm = evaluate_model(test_loader)
     con_mat = confusion_matrixes(cm)
     
-    return acc, con_mat, loss_image
+    visuals = [con_mat, loss_image]
+    
+    return acc, visuals
     
 if __name__ == "__main__":
     run(1, 1, 0.01)
